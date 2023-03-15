@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.prashant.composetemplate.navigation.LOGIN
-import com.prashant.composetemplate.navigation.Screens
 
 @Composable
 fun Login(navHostController: NavHostController, loginVM: LoginVM = hiltViewModel()) {
@@ -40,12 +39,7 @@ fun Login(navHostController: NavHostController, loginVM: LoginVM = hiltViewModel
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(onClick = {
-            navHostController.navigate(Screens.Home.route) {
-                popUpTo(Screens.Login.route) {
-                    inclusive = true
-                }
-                launchSingleTop = true
-            }
+            loginVM.login(navHostController)
         }) {
             Text(
                 text = LOGIN,

@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.prashant.composetemplate.datastore.DataStoreUtil
 import com.prashant.composetemplate.datastore.dataStore
+import com.prashant.composetemplate.network.Repository
 import com.prashant.composetemplate.network.RetrofitApi
 import com.prashant.composetemplate.preferencefile.PreferenceFile
 import com.prashant.composetemplate.preferencefile.preferenceName
@@ -24,7 +26,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+
 @InstallIn(SingletonComponent::class)
 @Module
 class Module {
@@ -111,8 +113,12 @@ class Module {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): RetrofitApi = retrofit.create(RetrofitApi::class.java)
+    fun provideApiService(retrofit: Retrofit): RetrofitApi =
+        retrofit.create(RetrofitApi::class.java)
 
+    @Provides
+    @Singleton
+    fun provideRepository(retrofitApi: RetrofitApi): Repository = Repository(retrofitApi)
 
 
 }
