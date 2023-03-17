@@ -2,6 +2,7 @@ package com.prashant.composetemplate
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateFloat
@@ -16,17 +17,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle.Companion.Normal
 import androidx.navigation.compose.rememberNavController
+import com.prashant.composetemplate.interfaces.UiConfiguration
 import com.prashant.composetemplate.navigation.NavGraph
 import com.prashant.composetemplate.theme.ComposeTemplateTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), UiConfiguration {
+
+    private val mutableState = mutableStateOf(false)
 
     companion object {
         lateinit var weakReference: WeakReference<Context>
@@ -37,7 +44,8 @@ class MainActivity : ComponentActivity() {
         weakReference = WeakReference(this)
         setContent {
             val navHostController = rememberNavController()
-            ComposeTemplateTheme {
+
+            ComposeTemplateTheme(fontStyle = Normal, darkTheme = mutableState.value) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -45,7 +53,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         NavGraph(navHostController = navHostController)
-                        CircularProgressAnimated()
+//                        CircularProgressAnimated()
                     }
                 }
             }
@@ -81,5 +89,12 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         weakReference = WeakReference(this)
+
     }
+
+    override fun darkTheme(boolean: Boolean) {
+        mutableState.value = boolean
+        Log.e("Mainactivity", "darkTheme:$boolean")
+    }
+
 }

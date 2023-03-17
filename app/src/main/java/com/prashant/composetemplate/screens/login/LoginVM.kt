@@ -27,26 +27,27 @@ class LoginVM @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
 
+    private val TAG: String = this@LoginVM.javaClass.simpleName
     fun login(navHostController: NavHostController) = viewModelScope.launch {
-        repository.apiCall<LoginData>(
-            retrofitCall = object : ApiProcessor {
-                override suspend fun sendRequest(retrofitApi: RetrofitApi): Response<JsonElement> {
-                    return retrofitApi.login("userId", "password")
+        repository.apiCall<LoginData>(retrofitCall = object : ApiProcessor {
+            override suspend fun sendRequest(retrofitApi: RetrofitApi): Response<JsonElement> {
+                return retrofitApi.login("userId", "password")
+            }
+        }, result = { result ->
+            Log.e(TAG, "login: $result")
+            navHostController.navigate(Screens.Home.route) {
+                popUpTo(Screens.Login.route) {
+                    inclusive = true
                 }
-            },
-            result = { result ->
-                Log.e("TAG", "login: $result")
-                navHostController.navigate(Screens.Home.route) {
-                    popUpTo(Screens.Login.route) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            },
-            responseMessage = { message, code ->
-                Log.e("TAG", "login: $message $code")
-                message.takeIf { it.isNotEmpty() }
-                    ?: "$code ${getStringResource(R.string.someError)}".showToast()
-            })
+                launchSingleTop = true
+            }
+        }, responseMessage = { message, code ->
+            Log.e(this@LoginVM.javaClass.simpleName, "login: $message $code")
+            message.takeIf { it.isNotEmpty() }
+                ?: "$code ${getStringResource(R.string.someError)}".showToast()
+        })
     }
+
 }
+
+
